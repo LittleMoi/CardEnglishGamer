@@ -5,6 +5,6 @@ package com.kteam.cardenglishgamer.interfaces;
  */
 
 public interface HttpCallbackListener {
-    void onFinish();
-    void onError();
+    void onFinish(String response);
+    void onError(Exception e);
 }
