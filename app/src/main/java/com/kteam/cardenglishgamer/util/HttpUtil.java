@@ -281,9 +281,7 @@ public class HttpUtil {
     }
 
     /**
-     * https 域名校验
-     * @author biezhi
-     * @since 1.0
+     * 域名校验
      */
     public class TrustAnyHostnameVerifier implements HostnameVerifier {
         public boolean verify(String hostname, SSLSession session) {
