@@ -33,6 +33,13 @@ public class HttpUtil {
     private static final String _GET = "GET"; // GET字段
     private static final String _POST = "POST";// POST字段
 
+    public static int StatusCode;//Http协议状态码
+    private static boolean StatusCodeDescriptionOff = true;//状态码描述文本关标志
+
+    public static boolean isStatusCodeDescriptionOff() {
+        return StatusCodeDescriptionOff;
+    }
+
     /**
      * 初始化http请求参数
      * @param address 服务器接入API，不可为null
@@ -127,18 +134,23 @@ public class HttpUtil {
             } else {
                 connection = initHttp(initParams(address, params), _GET, headers);
             }
-            InputStream in = connection.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in, DEFAULT_CHARSET));
-            StringBuilder response = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                response.append(line);
+            StatusCode = connection.getResponseCode();
+            if(StatusCode<200||StatusCode>=300){
+                return StatusCode+HttpStatusCode.getDescription(StatusCode,StatusCodeDescriptionOff);
+            }else {
+                InputStream in = connection.getInputStream();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in, DEFAULT_CHARSET));
+                StringBuilder response = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+                in.close();
+                if (connection != null) {
+                    connection.disconnect();// 关闭连接
+                }
+                return response.toString();
             }
-            in.close();
-            if (connection!= null) {
-                connection.disconnect();// 关闭连接
-            }
-            return response.toString();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -185,18 +197,23 @@ public class HttpUtil {
             out.flush();
             out.close();
 
-            InputStream in = connection.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in, DEFAULT_CHARSET));
-            String line;
-            StringBuilder response = new StringBuilder();
-            while ((line = reader.readLine()) != null) {
-                response.append(line);
+            StatusCode = connection.getResponseCode();
+            if(StatusCode<200||StatusCode>=300){
+                return StatusCode+HttpStatusCode.getDescription(StatusCode,StatusCodeDescriptionOff);
+            }else {
+                InputStream in = connection.getInputStream();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in, DEFAULT_CHARSET));
+                String line;
+                StringBuilder response = new StringBuilder();
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+                in.close();
+                if (connection != null) {
+                    connection.disconnect();// 关闭连接
+                }
+                return response.toString();
             }
-            in.close();
-            if (connection != null) {
-                connection.disconnect();// 关闭连接
-            }
-            return response.toString();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
