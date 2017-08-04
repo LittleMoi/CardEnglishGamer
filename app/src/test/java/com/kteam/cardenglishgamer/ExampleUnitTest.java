@@ -1,8 +1,6 @@
 package com.kteam.cardenglishgamer;
 
-        import android.util.Log;
-
-        import com.kteam.cardenglishgamer.util.HttpUtil;
+        import com.kteam.cardenglishgamer.util.Http.HttpUtil;
 
         import org.junit.Test;
 

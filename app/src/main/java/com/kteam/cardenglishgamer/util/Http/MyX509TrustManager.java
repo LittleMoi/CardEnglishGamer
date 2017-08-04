@@ -1,4 +1,4 @@
-package com.kteam.cardenglishgamer.util;
+package com.kteam.cardenglishgamer.util.Http;
 
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
