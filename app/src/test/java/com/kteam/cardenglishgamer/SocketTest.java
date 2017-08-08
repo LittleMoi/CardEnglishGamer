@@ -23,10 +23,10 @@ public class SocketTest {
 
         DefaultCommonClientConnector connector = new DefaultCommonClientConnector();
         Channel channel = connector.connect(8082,"119.23.29.129");
+        User user = new User(1,"1");
         Message message = new Message();
         message.sign(REQUEST);
-        message.data("HelloWorld!");
-
+        message.data(user);
         channel.writeAndFlush(message).addListener(new ChannelFutureListener() {
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {
@@ -36,6 +36,36 @@ public class SocketTest {
             }
         });
 
+        DefaultCommonClientConnector.MessageNonAck nonAck = new DefaultCommonClientConnector.MessageNonAck(message,channel);
+        connector.addNeedAckMessageInfo(nonAck);
+
+
+
+    }
+    class User{
+        User(Integer id,String name){
+            this.id = id;
+            this.name = name;
+
+        }
+        Integer id;
+        String name;
+
+        public void setId(Integer id) {
+            this.id = id;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Integer getId() {
+            return id;
+        }
+
+        public String getName() {
+            return name;
+        }
     }
 }
 

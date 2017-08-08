@@ -17,21 +17,29 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/INDEX.LIST'
+    }
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
     compile 'com.google.protobuf:protobuf-java:3.3.1'
     compile 'io.protostuff:protostuff-core:1.6.0'
     compile 'io.protostuff:protostuff-runtime:1.6.0'
-    compile 'io.netty:netty-codec-smtp:4.1.14.Final'
-    compile 'io.netty:netty-codec-redis:4.1.14.Final'
     compile 'org.objenesis:objenesis:2.6'
     compile 'org.slf4j:slf4j-android:1.7.25'
+    // https://mvnrepository.com/artifact/io.netty/netty-all
+    compile 'io.netty:netty-all:4.1.13.Final'
 }
