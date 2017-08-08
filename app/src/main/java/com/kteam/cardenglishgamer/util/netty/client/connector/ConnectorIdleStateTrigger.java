@@ -31,6 +31,7 @@ public class ConnectorIdleStateTrigger extends ChannelInboundHandlerAdapter {
             if (state == IdleState.WRITER_IDLE) {
             	logger.info("need send heartbeats");
                 ctx.writeAndFlush(Heartbeats.heartbeatContent());
+                logger.info("already send heartbeats");
             }
         } else {
             super.userEventTriggered(ctx, evt);

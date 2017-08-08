@@ -1,16 +1,7 @@
 package com.kteam.cardenglishgamer.activity;
 
-import com.kteam.cardenglishgamer.util.netty.client.connector.DefaultCommonClientConnector;
-import com.kteam.cardenglishgamer.util.netty.common.Message;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
-
-import static com.kteam.cardenglishgamer.util.netty.common.NettyCommonProtocol.REQUEST;
 
 /**
  * Created by Mo on 2017/8/4.
@@ -18,23 +9,22 @@ import static com.kteam.cardenglishgamer.util.netty.common.NettyCommonProtocol.R
 
 public class ClientConnectorStartup {
     private static final Logger logger = LoggerFactory.getLogger(ClientConnectorStartup.class);
-
     public static void go() {
 
-        DefaultCommonClientConnector clientConnector = new DefaultCommonClientConnector();
-        Channel channel = clientConnector.connect(8082, "10.0.2.2");
-        User user = new User(1, "dubbo");
-        Message message = new Message();
-        message.sign(REQUEST);
+//        DefaultCommonClientConnector clientConnector = new DefaultCommonClientConnector();
+//        Channel channel = clientConnector.connect(8082, "10.0.2.2");
+//        User user = new User(1, "dubbo");
+//        Message message = new Message();
+//        message.sign(REQUEST);
         //获取到channel发送双方规定的message格式的信息
-        channel.writeAndFlush(message).addListener(new ChannelFutureListener() {
-
-            public void operationComplete(ChannelFuture future) throws Exception {
-                if(!future.isSuccess()) {
-                    logger.info("send fail,reason is {}",future.cause().getMessage());
-                }
-            }
-        });
+//        channel.writeAndFlush(message).addListener(new ChannelFutureListener() {
+//
+//            public void operationComplete(ChannelFuture future) throws Exception {
+//                if(!future.isSuccess()) {
+//                    logger.info("send fail,reason is {}",future.cause().getMessage());
+//                }
+//            }
+//        });
 
 //        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 //        while(true){

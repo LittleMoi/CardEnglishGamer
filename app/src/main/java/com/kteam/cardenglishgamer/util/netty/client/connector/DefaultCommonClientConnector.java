@@ -1,6 +1,7 @@
 package com.kteam.cardenglishgamer.util.netty.client.connector;
 
 
+import com.kteam.cardenglishgamer.interfaces.NettyCallback;
 import com.kteam.cardenglishgamer.util.netty.AcknowledgeEncoder;
 import com.kteam.cardenglishgamer.util.netty.ConnectionWatchdog;
 import com.kteam.cardenglishgamer.util.netty.common.Acknowledge;
@@ -53,7 +54,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  * @time 2016年7月22日14:54:37
  * @modifytime
  */
-public class DefaultCommonClientConnector extends NettyClientConnector {
+public abstract class DefaultCommonClientConnector extends NettyClientConnector implements NettyCallback{
 	
 	private static final Logger logger = LoggerFactory.getLogger(DefaultCommonClientConnector.class);
 	
@@ -113,7 +114,7 @@ public class DefaultCommonClientConnector extends NettyClientConnector {
                 		
                         this,
                         //每隔30s的时间触发一次userEventTriggered的方法，并且指定IdleState的状态位是WRITER_IDLE
-                        new IdleStateHandler(0, 30, 0, TimeUnit.SECONDS),
+                        new IdleStateHandler(0, 40, 0, TimeUnit.SECONDS),
                         //实现userEventTriggered方法，并在state是WRITER_IDLE的时候发送一个心跳包到sever端，告诉server端我还活着
                         idleStateTrigger,
                         new MessageDecoder(),
@@ -144,9 +145,9 @@ public class DefaultCommonClientConnector extends NettyClientConnector {
         }
 		return channel;
 	}
-	
+
 	@ChannelHandler.Sharable
-    class MessageHandler extends ChannelInboundHandlerAdapter {
+    class MessageHandler extends ChannelInboundHandlerAdapter{
         @Override
         public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
             throw new Exception(cause);
@@ -154,14 +155,15 @@ public class DefaultCommonClientConnector extends NettyClientConnector {
 
         @Override
 		public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-			
+
 			if(msg instanceof Acknowledge){
 				logger.info("收到server端的Ack信息，无需再次发送信息");
 				messagesNonAcks.remove(((Acknowledge)msg).sequence());
 			}
-            if(msg instanceof Message){;
-                System.out.print(msg.toString());
+            else {
+                onReceive(msg);
             }
+
 		}
 
     }
