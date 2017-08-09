@@ -12,12 +12,8 @@ import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 
 
-
 /**
- * 心跳trigger
- * @author BazingaLyn
- * @copyright fjc
- * @time
+ * 心跳响应器，与 {@link  io.netty.handler.timeout.IdleStateHandler}结合使用。
  */
 @ChannelHandler.Sharable
 public class ConnectorIdleStateTrigger extends ChannelInboundHandlerAdapter {

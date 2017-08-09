@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.kteam.cardenglishgamer.R;
+import com.kteam.cardenglishgamer.util.netty.ChannelManager;
 import com.kteam.cardenglishgamer.util.netty.client.connector.DefaultCommonClientConnector;
 import com.kteam.cardenglishgamer.util.netty.common.Message;
 import com.kteam.cardenglishgamer.util.netty.common.NettyCommonProtocol;
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView inputText;
     private Button sendButton;
     private RecyclerView msgRecyclerView;
+    private DefaultCommonClientConnector clientConnector;
     private List<Message> msgList = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,31 +50,43 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        DefaultCommonClientConnector clientConnector = new DefaultCommonClientConnector() {
-            @Override
-            public void onReceive(Object msg) {
-                if(msg instanceof Message){
-                Message mmsg = (Message)msg;
-                    if( mmsg.sign() == NettyCommonProtocol.SERVICE_1||mmsg.sign() == NettyCommonProtocol.SERVICE_2) {
-                        msgList.add(mmsg);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                adapter.notifyDataSetChanged();
-                                msgRecyclerView.scrollToPosition(msgList.size()-1);
-                                inputText.setText("");
-                            }
-                        });
+        ChannelManager cManager = ChannelManager.INSTANCE;
+        if(savedInstanceState !=null){
+            channel = cManager.get(savedInstanceState.getString("chat"));
+        }else {
+            clientConnector = new DefaultCommonClientConnector() {
+                @Override
+                public void onReceive(Object msg) {
+                    if (msg instanceof Message) {
+                        Message mmsg = (Message) msg;
+                        if (mmsg.sign() == NettyCommonProtocol.SERVICE_1 || mmsg.sign() == NettyCommonProtocol.SERVICE_2) {
+                            msgList.add(mmsg);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    adapter.notifyDataSetChanged();
+                                    msgRecyclerView.scrollToPosition(msgList.size() - 1);
+                                    inputText.setText("");
+                                }
+                            });
 
+                        }
                     }
                 }
-            }
 
-            @Override
-            public void onException(String exception) {
+                @Override
+                public void onException(String exception) {
 
-            }
-        };
-        channel = clientConnector.connect(8082, "10.0.2.2");
+                }
+            };
+            channel = clientConnector.connect(8082, "119.23.29.129");
+            cManager.put(channel);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString("chat",channel.id().asLongText());
+        super.onSaveInstanceState(outState);
     }
 }

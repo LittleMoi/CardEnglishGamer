@@ -1,4 +1,4 @@
-package com.kteam.cardenglishgamer.util.Http;
+package com.kteam.cardenglishgamer.util.http;
 
 import java.io.BufferedReader;
 import java.io.IOException;

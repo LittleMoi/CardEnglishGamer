@@ -3,11 +3,8 @@ package com.kteam.cardenglishgamer.util.netty.client.connector;
 import io.netty.channel.Channel;
 
 /**
- * 
- * @author BazingaLyn
- * @description
- * @time 2016年7月21日10:47:12
- * @modifytime
+ * Netty服务端常用接口
+ * @author Mo
  */
 public interface ClientConnector {
 	

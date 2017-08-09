@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import io.protostuff.Tag;
 
 /**
- * Netty传输的基本单位
+ * Carrier的信息内置类
  * @author Mo
  *
  */

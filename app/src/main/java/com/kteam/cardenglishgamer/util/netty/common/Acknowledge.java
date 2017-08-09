@@ -17,12 +17,7 @@
 package com.kteam.cardenglishgamer.util.netty.common;
 
 /**
- * ACK确认
- *
- * jupiter
- * org.jupiter.transport
- *
- * @author jiachun.fjc
+ * Ack信息类
  */
 public class Acknowledge {
 

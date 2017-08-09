@@ -1,12 +1,7 @@
 package com.kteam.cardenglishgamer.util.netty.common;
 
 /**
- * 
- * @author BazingaLyn
- * @description
- * @copyright fjc
- * @time 2016年7月20日20:48:08
- * @modifytime
+ * 检测是否处于Linux环境的工具类
  */
 public final class NativeSupport {
 

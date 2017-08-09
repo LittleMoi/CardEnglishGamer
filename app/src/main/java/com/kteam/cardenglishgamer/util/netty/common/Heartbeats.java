@@ -8,16 +8,13 @@ import static com.kteam.cardenglishgamer.util.netty.common.NettyCommonProtocol.H
 import static com.kteam.cardenglishgamer.util.netty.common.NettyCommonProtocol.MAGIC;
 
 /**
- * 
- * @author BazingaLyn
- * @description 心跳包
- * @time
- * @modifytime
+ * 心跳包
  */
 public class Heartbeats {
 
     private static final ByteBuf HEARTBEAT_BUF;
 
+    //静态块，防止多次初始化浪费性能
     static {
         ByteBuf buf = Unpooled.buffer(HEAD_LENGTH);
         buf.writeShort(MAGIC);

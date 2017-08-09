@@ -40,7 +40,7 @@ import io.netty.util.HashedWheelTimer;
 
 import static com.kteam.cardenglishgamer.util.netty.common.NettyCommonProtocol.ACK;
 import static com.kteam.cardenglishgamer.util.netty.common.NettyCommonProtocol.MAGIC;
-import static com.kteam.cardenglishgamer.util.netty.common.NettyCommonProtocol.RESPONSE;
+import static com.kteam.cardenglishgamer.util.netty.common.NettyCommonProtocol.MESSAGE;
 import static com.kteam.cardenglishgamer.util.netty.common.NettyCommonProtocol.SERVICE_1;
 import static com.kteam.cardenglishgamer.util.netty.common.NettyCommonProtocol.SERVICE_2;
 import static com.kteam.cardenglishgamer.util.netty.common.NettyCommonProtocol.SERVICE_3;
@@ -48,11 +48,8 @@ import static com.kteam.cardenglishgamer.util.netty.serializer.SerializerHolder.
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
- * 
- * @author BazingaLyn
- * @description 默认的一些比较常用的client的配置
- * @time 2016年7月22日14:54:37
- * @modifytime
+ * @author Mo
+ * 默认的一些比较常用的client的配置
  */
 public abstract class DefaultCommonClientConnector extends NettyClientConnector implements NettyCallback{
 	
@@ -60,18 +57,19 @@ public abstract class DefaultCommonClientConnector extends NettyClientConnector 
 	
 	//每个连接维护一个channel
 	private volatile Channel channel;
-	
-	//信息处理的handler
-	private final MessageHandler handler = new MessageHandler();
-	//编码
-    private final MessageEncoder encoder = new MessageEncoder();
-    //ack
+	//Carrier消息处理器
+	private final CarrierHandler handler = new CarrierHandler();
+
+	//Carrier编码器
+    private final CarrierEncoder encoder = new CarrierEncoder();
+    //Ack编码器
     private final AcknowledgeEncoder ackEncoder = new AcknowledgeEncoder();
-    
+    //Message的未接受服务端ACK确认表
     private final ConcurrentMap<Long, MessageNonAck> messagesNonAcks = new ConcurrentHashMap<Long, MessageNonAck>();
-	
+	//时间轮循环事件
 	protected final HashedWheelTimer timer = new HashedWheelTimer(new ThreadFactory() {
-		
+
+        //自动计数器
 		private AtomicInteger threadIndex = new AtomicInteger(0);
 		
 		public Thread newThread(Runnable r) {
@@ -117,7 +115,7 @@ public abstract class DefaultCommonClientConnector extends NettyClientConnector 
                         new IdleStateHandler(0, 40, 0, TimeUnit.SECONDS),
                         //实现userEventTriggered方法，并在state是WRITER_IDLE的时候发送一个心跳包到sever端，告诉server端我还活着
                         idleStateTrigger,
-                        new MessageDecoder(),
+                        new CarrierDecoder(),
                         encoder,
                         ackEncoder,
                         handler
@@ -147,7 +145,7 @@ public abstract class DefaultCommonClientConnector extends NettyClientConnector 
 	}
 
 	@ChannelHandler.Sharable
-    class MessageHandler extends ChannelInboundHandlerAdapter{
+    class CarrierHandler extends ChannelInboundHandlerAdapter{
         @Override
         public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
             throw new Exception(cause);
@@ -186,15 +184,21 @@ public abstract class DefaultCommonClientConnector extends NettyClientConnector 
      * + 8 // 消息 id long 类型
      * + 4 // 消息体body长度, int类型
      */
+
+    /**
+     * Carrier编码器
+     * @author Mo
+     * 什么是Carrier？
+     * Carrier是消息传播通道{@link Channel}的最小单位，不特指某个类。它由C/S双方协定的数据结构。
+     * 格式为 HEADER + BODY
+     * 注意：它是所信息类的载体。例如：内置类{@link Message}
+     */
     @ChannelHandler.Sharable
-    static class MessageEncoder extends MessageToByteEncoder<Message> {
+    static class CarrierEncoder extends MessageToByteEncoder<Message> {
 
         @Override
         protected void encode(ChannelHandlerContext ctx, Message msg, ByteBuf out) throws Exception {
             byte[] bytes = serializerImpl().writeObject(msg);
-
-
-
             out.writeShort(MAGIC)
                     .writeByte(msg.sign())
                     .writeByte(0)
@@ -203,10 +207,18 @@ public abstract class DefaultCommonClientConnector extends NettyClientConnector 
                     .writeBytes(bytes);
         }
     }
-    
-    static class MessageDecoder extends ReplayingDecoder<MessageDecoder.State> {
 
-        public MessageDecoder() {
+    /**
+     * Carrier解码器
+     * @author Mo
+     * 什么是Carrier？
+     * Carrier是消息传播通道{@link Channel}的最小单位，不特指某个类。它由C/S双方协定的数据结构。
+     * 格式为 HEADER + BODY
+     * 注意：它是所信息类的载体。例如：内置类{@link Message}
+     */
+    static class CarrierDecoder extends ReplayingDecoder<CarrierDecoder.State> {
+
+        public CarrierDecoder() {
             super(State.HEADER_MAGIC);
         }
 
@@ -233,7 +245,7 @@ public abstract class DefaultCommonClientConnector extends NettyClientConnector 
                     checkpoint(State.BODY);
                 case BODY:
                     switch (header.sign()) {
-                        case RESPONSE:
+                        case MESSAGE:
                         case SERVICE_1:
                         case SERVICE_2:
                         case SERVICE_3: {

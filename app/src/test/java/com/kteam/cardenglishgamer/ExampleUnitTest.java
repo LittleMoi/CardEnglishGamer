@@ -1,6 +1,6 @@
 package com.kteam.cardenglishgamer;
 
-        import com.kteam.cardenglishgamer.util.Http.HttpUtil;
+        import com.kteam.cardenglishgamer.util.http.HttpUtil;
 
         import org.junit.Test;
 
