@@ -9,6 +9,7 @@ package com.kteam.cardenglishgamer.util.netty.common;
 public class NettyCommonProtocol {
     /**
      * HEADER 协议头参数部分
+     * HEADER参数构成：MAGIC + SIGN + STATUS + ID + BODYLEATHER
      */
     //协议头起始位
     public static final short MAGIC = (short) 0xbabe;
@@ -16,15 +17,15 @@ public class NettyCommonProtocol {
     public static final int HEAD_LENGTH = 16;
 
     /**
-     * BODY 消息标志位（用于解析）
-     * 主要为类别消息头
-     * 此次更新后，每个作为解析的类必须内置标志位静态数。
-     * 此次更新后，HEADER标志位与Message解析绑定。
+     * BODY 解析标志位（即HEADER中的SIGN参数）
+     * 名字一般为类名的大写
+     * Message为内置类，与{@link Acknowledge}连用。共同组成ACK确认传输系统。想拥有此功能，在新建的类中可继承Message类。
+     * 此次更新后，HEADER标志位与Message解除绑定。
      * Message将被当做普通信息类。
      */
     //内置Message类
     public static final byte MESSAGE = 1;
-    //自定义类
+    //自定义类，未命名
     public static final byte SERVICE = 2;
     public static final byte SERVICE_1 = 3;
     public static final byte SERVICE_2 = 4;
