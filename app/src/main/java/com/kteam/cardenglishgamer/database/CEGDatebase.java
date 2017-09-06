@@ -3,6 +3,8 @@ package com.kteam.cardenglishgamer.database;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.kteam.cardenglishgamer.entity.Account;
+
 /**
  * Created by Mo on 2017/7/7.
  * 本地数据库函数封装类。
@@ -33,5 +35,11 @@ public class CEGDatebase {
         if(cegDatabase == null)
             cegDatabase = new CEGDatebase(context);
         return cegDatabase;
+    }
+
+    public Account queryAccountByUid(int uid){
+        Account account = null;
+
+        return account;
     }
 }
